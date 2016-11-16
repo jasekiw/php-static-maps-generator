@@ -1,17 +1,19 @@
 <?php
+namespace Google\StaticMaps;
+use Exception;
 
 /**
  * @author Ben Squire <b.squire@gmail.com>
  * @license Apache 2.0
  *
- * @package GoogleStaticMap
+ * @package Map
  *
  * @abstract This class abstracts the path points that can be placed onto the
  * Google Static Maps. Either via coordinates or as a string location.
  *
  * @see https://github.com/bensquire/php-static-maps-generator
  */
-class GoogleStaticMapPathPoint {
+class PathPoint {
 
 	protected $fLongitude = null;
 	protected $fLatitude = null;
@@ -20,13 +22,15 @@ class GoogleStaticMapPathPoint {
 	public function __construct($aParams = array()) {
 		
 	}
-
-	/**
-	 * Set the longitude of the map point.
-	 *
-	 * @param float $fLongitude
-	 * @return \GoogleStaticMapPathPoint
-	 */
+    
+    /**
+     * Set the longitude of the map point.
+     *
+     * @param float $fLongitude
+     *
+     * @return PathPoint
+     * @throws Exception
+     */
 	public function setLongitude($fLongitude) {
 		if (!is_numeric($fLongitude)) {
 			throw new Exception('Invalid longitude value.');
@@ -35,18 +39,19 @@ class GoogleStaticMapPathPoint {
 		$this->fLongitude = (float) $fLongitude;
 		return $this;
 	}
-
-	/**
-	 * Set the Latitude of the map point.
-	 *
-	 * @param float $fLatitude
-	 * @return \GoogleStaticMapPathPoint
-	 */
+    
+    /**
+     * Set the Latitude of the map point.
+     *
+     * @param float $fLatitude
+     *
+     * @return PathPoint
+     * @throws Exception
+     */
 	public function setLatitude($fLatitude) {
 		if (!is_numeric($fLatitude)) {
 			throw new Exception('Invalid latitude value.');
 		}
-
 		$this->fLatitude = (float) $fLatitude;
 		return $this;
 	}
@@ -55,7 +60,8 @@ class GoogleStaticMapPathPoint {
 	 * Set a string location of the map point.
 	 *
 	 * @param string $sLocation
-	 * @return \GoogleStaticMapPathPoint
+	 *
+     * @return PathPoint
 	 * @throws Exception
 	 */
 	public function setLocation($sLocation) {
@@ -119,5 +125,3 @@ class GoogleStaticMapPathPoint {
 	}
 
 }
-
-?>

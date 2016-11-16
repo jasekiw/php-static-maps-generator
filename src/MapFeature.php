@@ -1,10 +1,12 @@
 <?php
+namespace Google\StaticMaps;
+use Exception;
 
 /**
  * @author Ben Squire <b.squire@gmail.com>
  * @license Apache 2.0
  *
- * @package GoogleStaticMap
+ * @package Map
  *
  * @abstract This class abstracts the map feature part of the Google
  * Static map API. i.e: Determine those map features that are visible
@@ -12,7 +14,7 @@
  *
  * @see https://github.com/bensquire/php-static-maps-generator
  */
-class GoogleStaticMapFeature {
+class MapFeature {
 
 	const SEPERATOR = '|';
 
@@ -67,13 +69,15 @@ class GoogleStaticMapFeature {
 			$this->setStyle($aParams['style']);
 		}
 	}
-
-	/**
-	 * Sets the type of feature the object represents
-	 *
-	 * @param string $sFeature
-	 * @return GoogleStaticMapFeature
-	 */
+    
+    /**
+     * Sets the type of feature the object represents
+     *
+     * @param string $sFeature
+     *
+     * @return MapFeature
+     * @throws Exception
+     */
 	public function setFeature($sFeature) {
 		if (!in_array($sFeature, $this->aFeatures)) {
 			throw new Exception('Unknown Map Feature');
@@ -82,32 +86,36 @@ class GoogleStaticMapFeature {
 		$this->sFeature = $sFeature;
 		return $this;
 	}
-
-	/**
-	 * Creates the feature styling object either using an associative array of
-	 * values or by passing in an instance of _GoogleStaticMapFeatureStyling.
-	 *
-	 * @param GoogleStaticMapFeatureStyling $mStyle
-	 * @return GoogleStaticMapFeature
-	 */
+    
+    /**
+     * Creates the feature styling object either using an associative array of
+     * values or by passing in an instance of _GoogleStaticMapFeatureStyling.
+     *
+     * @param FeatureStyling $mStyle
+     *
+     * @return MapFeature
+     * @throws Exception
+     */
 	public function setStyle($mStyle) {
-		if ($mStyle instanceof GoogleStaticMapFeatureStyling) {
+		if ($mStyle instanceof FeatureStyling) {
 			$this->oStyle = $mStyle;
 		} elseif (is_array($mStyle)) {
-			$this->oStyle = new GoogleStaticMapFeatureStyling($mStyle);
+			$this->oStyle = new FeatureStyling($mStyle);
 		} else {
 			throw new Exception('Invalid type passed to Map Feature Styling.');
 		}
 
 		return $this;
 	}
-
-	/**
-	 * Sets the element of the feature you are styling, 'all', 'geometry', 'labels'.
-	 *
-	 * @param string $sElement
-	 * @return GoogleStaticMapFeature
-	 */
+    
+    /**
+     * Sets the element of the feature you are styling, 'all', 'geometry', 'labels'.
+     *
+     * @param string $sElement
+     *
+     * @return MapFeature
+     * @throws Exception
+     */
 	public function setElement($sElement) {
 		if (!in_array($sElement, $this->aElements)) {
 			throw new Exception('Unknown Map Element');
@@ -129,7 +137,7 @@ class GoogleStaticMapFeature {
 	/**
 	 * Returns the features styling object.
 	 *
-	 * @return GoogleStaticMapFeatureStyling
+	 * @return FeatureStyling
 	 */
 	public function getStyle() {
 		return $this->oStyle;
@@ -150,7 +158,7 @@ class GoogleStaticMapFeature {
 	 * @return string
 	 */
 	public function build() {
-		if ($this->oStyle instanceOf GoogleStaticMapFeatureStyling) {
+		if ($this->oStyle instanceOf FeatureStyling) {
 			$styles = $this->oStyle->build();
 		}
 

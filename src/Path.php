@@ -1,10 +1,12 @@
 <?php
+namespace Google\StaticMaps;
+use Exception;
 
 /**
  * @author Ben Squire <b.squire@gmail.com>
  * @license Apache 2.0
  *
- * @package GoogleStaticMap
+ * @package Map
  *
  * @abstract This class abstracts the path that can be placed onto the
  * Google Static Maps. Controlling the points object and the path styling.
@@ -13,7 +15,7 @@
  * @todo https://developers.google.com/maps/documentation/staticmaps/#EncodedPolylines
  * @todo https://developers.google.com/maps/documentation/staticmaps/#Viewports
  */
-class GoogleStaticMapPath {
+class Path {
 
 	const SEPERATOR = '|';
 
@@ -56,7 +58,7 @@ class GoogleStaticMapPath {
 	 * Set the weight of the map path line in px
 	 *
 	 * @param int $iWeight The width of the map path line
-	 * @return \GoogleStaticMapPathStyling
+	 * @return Path
 	 * @throws Exception
 	 */
 	public function setWeight($iWeight) {
@@ -73,7 +75,7 @@ class GoogleStaticMapPath {
 	 * listed color array.
 	 *
 	 * @param string $sColor
-	 * @return \GoogleStaticMapPathStyling
+	 * @return Path
 	 * @throws Exception
 	 */
 	public function setColor($sColor) {
@@ -92,7 +94,7 @@ class GoogleStaticMapPath {
 	 * become visible).
 	 *
 	 * @param string $sFillColor
-	 * @return \GoogleStaticMapPathStyling
+	 * @return Path
 	 * @throws Exception
 	 */
 	public function setFillColor($sFillColor) {
@@ -134,24 +136,25 @@ class GoogleStaticMapPath {
 	}
 
 	/**
-	 * Creates the points in the Map Path, either pass a GoogleStaticMapPathPoint
-	 * object, an array of GoogleStaticMapPathPoint objects or an array of
-	 * GoogleStaticMapPathPoint constructor values
+	 * Creates the points in the Map Path, either pass a PathPoint
+	 * object, an array of PathPoint objects or an array of
+	 * PathPoint constructor values
 	 * 
-	 * @param mixed $mPoints Array or GoogleStaticMapPathPoint object
-	 * @return \GoogleStaticMapPath
+	 * @param mixed $mPoints Array or PathPoint object
+	 *
+     * @return Path
 	 * @throws Exception
 	 */
 	public function setPoint($mPoints) {
 		if (is_array($mPoints) && count($mPoints) > 0) {
 			foreach ($mPoints AS $mPoint) {
-				if ($mPoints instanceof GoogleStaticMapPathPoint) {
+				if ($mPoints instanceof PathPoint) {
 					$this->aPoints[] = $mPoint;
 				} elseif (is_array($mPoint)) {
-					$this->aPoints[] = new GoogleStaticMapPathPoint($mPoint);
+					$this->aPoints[] = new PathPoint($mPoint);
 				}
 			}
-		} elseif ($mPoints instanceof GoogleStaticMapPathPoint) {
+		} elseif ($mPoints instanceof PathPoint) {
 			$this->aPoints[] = $mPoints;
 		} else {
 			throw new Exception('Invalid Map Path Point');
@@ -196,5 +199,3 @@ class GoogleStaticMapPath {
 	}
 
 }
-
-?>

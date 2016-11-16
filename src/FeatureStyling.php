@@ -1,10 +1,12 @@
 <?php
+namespace Google\StaticMaps;
+use Exception;
 
 /**
  * @author Ben Squire <b.squire@gmail.com>
  * @license Apache 2.0
  *
- * @package GoogleStaticMap
+ * @package Map
  *
  * @abstract This class abstracts the map feature styling part of the Google
  * Static map API. i.e: Determine the styling of the map features (Think map color,
@@ -12,7 +14,7 @@
  *
  * @see https://github.com/bensquire/php-static-maps-generator
  */
-class GoogleStaticMapFeatureStyling {
+class FeatureStyling {
 
 	const SEPERATOR = '|';
 
@@ -48,13 +50,15 @@ class GoogleStaticMapFeatureStyling {
 			$this->setVisibility($aParams['visibility']);
 		}
 	}
-
-	/**
-	 * Sets the gamma value of the elements styling
-	 *
-	 * @param float $fGamma
-	 * @return GoogleStaticMapFeatureStyling
-	 */
+    
+    /**
+     * Sets the gamma value of the elements styling
+     *
+     * @param float $fGamma
+     *
+     * @return FeatureStyling
+     * @throws Exception
+     */
 	public function setGamma($fGamma) {
 		if (!is_float($fGamma) || $fGamma < 0.01 || $fGamma > 10.0) {
 			throw new Exception('Invalid Gamma Styling Paramater Passed ' . $fGamma);
@@ -63,13 +67,15 @@ class GoogleStaticMapFeatureStyling {
 		$this->fGamma = $fGamma;
 		return $this;
 	}
-
-	/**
-	 * Sets the lightness value of the elements styling
-	 *
-	 * @param int $iLightness
-	 * @return GoogleStaticMapFeatureStyling
-	 */
+    
+    /**
+     * Sets the lightness value of the elements styling
+     *
+     * @param int $iLightness
+     *
+     * @return FeatureStyling
+     * @throws Exception
+     */
 	public function setLightness($iLightness) {
 		if (!is_int($iLightness) || $iLightness > 100 || $iLightness < -100) {
 			throw new Exception('Invalid Lightness Styling Paramater Passed ' . $iLightness);
@@ -78,13 +84,15 @@ class GoogleStaticMapFeatureStyling {
 		$this->fLightness = $iLightness;
 		return $this;
 	}
-
-	/**
-	 * Sets the saturation of the elements styling
-	 *
-	 * @param int $iSaturation
-	 * @return GoogleStaticMapFeatureStyling
-	 */
+    
+    /**
+     * Sets the saturation of the elements styling
+     *
+     * @param int $iSaturation
+     *
+     * @return FeatureStyling
+     * @throws Exception
+     */
 	public function setSaturation($iSaturation) {
 		if (!is_int($iSaturation) || $iSaturation > 100 || $iSaturation < -100) {
 			throw new Exception('Invalid Saturation Styling Paramater Passed ' . $iSaturation);
@@ -93,14 +101,16 @@ class GoogleStaticMapFeatureStyling {
 		$this->fSaturation = $iSaturation;
 		return $this;
 	}
-
-	/**
-	 * Sets the RGB colour of the elements styling. Note: it is used for colour
-	 * only, not lightness or saturation.
-	 *
-	 * @param type $sHue
-	 * @return GoogleStaticMapFeatureStyling
-	 */
+    
+    /**
+     * Sets the RGB colour of the elements styling. Note: it is used for colour
+     * only, not lightness or saturation.
+     *
+     * @param string $sHue
+     *
+     * @return FeatureStyling
+     * @throws Exception
+     */
 	public function setHue($sHue) {
 		$sHue = ltrim($sHue, '#');
 
@@ -116,7 +126,8 @@ class GoogleStaticMapFeatureStyling {
 	 * Invert the lightness of the elements styling.
 	 *
 	 * @param bool $bInvertLightness
-	 * @return GoogleStaticMapFeatureStyling
+	 *
+     * @return FeatureStyling
 	 */
 	public function setInvertLightness($bInvertLightness) {
 		$this->bInvertLightness = ($bInvertLightness == true);
@@ -128,7 +139,8 @@ class GoogleStaticMapFeatureStyling {
 	 * decided by google).
 	 *
 	 * @param string $mVisibility
-	 * @return GoogleStaticMapFeatureStyling
+	 *
+     * @return FeatureStyling
 	 */
 	public function setVisibility($mVisibility) {
 
@@ -233,5 +245,3 @@ class GoogleStaticMapFeatureStyling {
 	}
 
 }
-
-?>

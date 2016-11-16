@@ -1,10 +1,12 @@
 <?php
+namespace Google\StaticMaps;
+use Exception;
 
 /**
  * @author Ben Squire <b.squire@gmail.com>
  * @license Apache 2.0
  *
- * @package GoogleStaticMap
+ * @package Map
  *
  * @abstract This class generates an img src which can be used to load a
  * 			'Google Static Map', it currently supports free features,
@@ -27,16 +29,16 @@
  * @example examples/example5.php
  * @example examples/example6.php
  */
-class GoogleStaticMap {
+class Map {
 
 	const MAX_URL_LENGTH = 2048;
 
 	protected $sGoogleURL = 'maps.google.com/maps/api/staticmap';
-	protected $aLanguages = array('eu', 'bg', 'bn', 'ca', 'cs', 'da', 'de', 'el', 'en', 'en-AU', 'en-GB', 'es', 'eu', 'fa', 'fi', 'fil', 'fr', 'gl', 'gu', 'hi', 'hr', 'hu', 'id', 'it', 'iw', 'ja', 'kn', 'ko', 'lt', 'lv', 'ml', 'mr', 'nl', 'nn', 'no', 'or', 'pl', 'pt', 'pt-BR', 'pt-PT', 'rm', 'ro', 'ru', 'sk', 'sl', 'sr', 'sv', 'tl', 'ta', 'te', 'th', 'tr', 'uk', 'vi', 'zh-CN', 'zh-TW');
-	protected $aFormatTypes = array('png', 'png8', 'png32', 'gif', 'jpg', 'jpg-baseline');
-	protected $aMapTypes = array('roadmap', 'satellite', 'hybrid', 'terrain');
-	protected $aScales = array(1, 2, 4); //4 is business only
-	protected $bHTTPS = false;
+	protected $aLanguages = ['eu', 'bg', 'bn', 'ca', 'cs', 'da', 'de', 'el', 'en', 'en-AU', 'en-GB', 'es', 'eu', 'fa', 'fi', 'fil', 'fr', 'gl', 'gu', 'hi', 'hr', 'hu', 'id', 'it', 'iw', 'ja', 'kn', 'ko', 'lt', 'lv', 'ml', 'mr', 'nl', 'nn', 'no', 'or', 'pl', 'pt', 'pt-BR', 'pt-PT', 'rm', 'ro', 'ru', 'sk', 'sl', 'sr', 'sv', 'tl', 'ta', 'te', 'th', 'tr', 'uk', 'vi', 'zh-CN', 'zh-TW'];
+	protected $aFormatTypes = ['png', 'png8', 'png32', 'gif', 'jpg', 'jpg-baseline'];
+	protected $aMapTypes = ['roadmap', 'satellite', 'hybrid', 'terrain'];
+	protected $aScales = [1, 2, 4]; //4 is business only
+	protected $bHTTPS = true; // by default we need it to be https or else google will reject our request
 	protected $sAPIKey = null;  //TODO Finishing Adding
 	protected $mCenter = null;  //{latitude,longitude} or ('city hall, new york, ny')
 	protected $iZoom = 10;
@@ -65,22 +67,24 @@ class GoogleStaticMap {
 	public function __toString() {
 		return $this->buildSource();
 	}
-
-	/**
-	 * Sets a single map marker instance, using either an array of parameters,
-	 * or by passing in  _GoogleStaticMapMarker object
-	 *
-	 * e.g:	$map->setMarker(array('color'=>'blue','size'=>'mid','longitude'=>-0.12437000,'latitude'=>51.59413528));
-	 *
-	 * @param GoogleStaticMapMarker $aParams
-	 * @return GoogleStaticMap
-	 */
+    
+    /**
+     * Sets a single map marker instance, using either an array of parameters,
+     * or by passing in  _GoogleStaticMapMarker object
+     *
+     * e.g:    $map->setMarker(array('color'=>'blue','size'=>'mid','longitude'=>-0.12437000,'latitude'=>51.59413528));
+     *
+     * @param Marker | array $aParams
+     *
+     * @return Map
+     * @throws Exception
+     */
 	public function setMarker($aParams) {
 
-		if ($aParams instanceof GoogleStaticMapMarker) {
+		if ($aParams instanceof Marker) {
 			$this->aMarkers[] = $aParams;
 		} elseif (is_array($aParams)) {
-			$this->aMarkers[] = new GoogleStaticMapMarker($aParams);
+			$this->aMarkers[] = new Marker($aParams);
 		} else {
 			throw new Exception('Unknown marker type passed in, not array nor object');
 		}
@@ -92,7 +96,8 @@ class GoogleStaticMap {
 	 * Sets the whether we should use https to retrieve the map
 	 *
 	 * @param bool $bHTTPs
-	 * @return GoogleStaticMap
+	 *
+*@return Map
 	 */
 	public function setHttps($bHTTPs) {
 		$this->bHTTPS = (bool) $bHTTPs;
@@ -103,7 +108,7 @@ class GoogleStaticMap {
 	 * Set the API Key used to retrieve this map (server or client)
 	 *
 	 * @param string $sKey API key, letters and/or numbers only
-	 * @return \GoogleStaticMap
+	 * @return Map
 	 * @throws Exception
 	 */
 	public function setAPIKey($sKey) {
@@ -123,19 +128,22 @@ class GoogleStaticMap {
 	 * e.g:	$map->setCenter('-0.12437000,51.59413528');
 	 *
 	 * @param string $sCenter
-	 * @return GoogleStaticMap
+	 *
+     * @return Map
 	 */
 	public function setCenter($sCenter) {
 		$this->mCenter = $sCenter;
 		return $this;
 	}
-
-	/**
-	 * Sets the maps resolution (1 == Normal, 2 == Double, 4 == Quad)
-	 *
-	 * @param int $iScale
-	 * @return GoogleStaticMap
-	 */
+    
+    /**
+     * Sets the maps resolution (1 == Normal, 2 == Double, 4 == Quad)
+     *
+     * @param int $iScale
+     *
+     * @return Map
+     * @throws Exception
+     */
 	public function setScale($iScale) {
 		if (!is_int($iScale) || !in_array($iScale, $this->aScales)) {
 			throw new Exception('Invalid map scale value: ' . $iScale);
@@ -144,15 +152,17 @@ class GoogleStaticMap {
 		$this->iScale = $iScale;
 		return $this;
 	}
-
-	/**
-	 * Sets the zoom level of the map, valid values 0 to 22.
-	 *
-	 * e.g:	$map->setZoom(22);
-	 *
-	 * @param int $iZoom
-	 * @return GoogleStaticMap
-	 */
+    
+    /**
+     * Sets the zoom level of the map, valid values 0 to 22.
+     *
+     * e.g:    $map->setZoom(22);
+     *
+     * @param int $iZoom
+     *
+     * @return Map
+     * @throws Exception
+     */
 	public function setZoom($iZoom) {
 		if ($iZoom < 0 || $iZoom > 22) {
 			throw new Exception('Invalid Zoom amount requested, 0 to 22, acceptable');
@@ -161,16 +171,18 @@ class GoogleStaticMap {
 		$this->iZoom = (int) $iZoom;
 		return $this;
 	}
-
-	/**
-	 * Sets the map type, options are:
-	 * 'roadmap', 'satellite', 'hybrid', 'terrain'
-	 *
-	 * e.g:	$map->setMapType('satellite');
-	 *
-	 * @param string $sMapType
-	 * @return GoogleStaticMap
-	 */
+    
+    /**
+     * Sets the map type, options are:
+     * 'roadmap', 'satellite', 'hybrid', 'terrain'
+     *
+     * e.g:    $map->setMapType('satellite');
+     *
+     * @param string $sMapType
+     *
+     * @return Map
+     * @throws Exception
+     */
 	public function setMapType($sMapType) {
 		if (!in_array($sMapType, $this->aMapTypes)) {
 			throw new Exception('Unknown maptype requested.');
@@ -179,16 +191,18 @@ class GoogleStaticMap {
 		$this->sMapType = $sMapType;
 		return $this;
 	}
-
-	/**
-	 * Sets the output format of the map. Expected formats are:
-	 * 'png', 'png8', 'png32', 'gif', 'jpg', 'jpg-baseline'
-	 *
-	 * e.g:	$map->setFormat('png8');
-	 *
-	 * @param type $sFileFormat
-	 * @return GoogleStaticMap
-	 */
+    
+    /**
+     * Sets the output format of the map. Expected formats are:
+     * 'png', 'png8', 'png32', 'gif', 'jpg', 'jpg-baseline'
+     *
+     * e.g:    $map->setFormat('png8');
+     *
+     * @param string $sFileFormat
+     *
+     * @return Map
+     * @throws Exception
+     */
 	public function setFormat($sFileFormat) {
 
 		if (!in_array($sFileFormat, $this->aFormatTypes)) {
@@ -198,15 +212,17 @@ class GoogleStaticMap {
 		$this->sFileFormat = $sFileFormat;
 		return $this;
 	}
-
-	/**
-	 * Sets the height (in pixels) of the map. Maximum of 640px.
-	 *
-	 * e.g:	$map->setHeight(320);
-	 *
-	 * @param int $iHeight
-	 * @return GoogleStaticMap
-	 */
+    
+    /**
+     * Sets the height (in pixels) of the map. Maximum of 640px.
+     *
+     * e.g:    $map->setHeight(320);
+     *
+     * @param int $iHeight
+     *
+     * @return Map
+     * @throws Exception
+     */
 	public function setHeight($iHeight) {
 
 		if (!is_numeric($iHeight)) {
@@ -220,15 +236,17 @@ class GoogleStaticMap {
 		$this->iHeight = (int) $iHeight;
 		return $this;
 	}
-
-	/**
-	 * Sets the width (in pixels) of the map. Maximum of 640px.
-	 *
-	 * e.g:	$map->setWidth(240);
-	 *
-	 * @param int $iWidth
-	 * @return GoogleStaticMap
-	 */
+    
+    /**
+     * Sets the width (in pixels) of the map. Maximum of 640px.
+     *
+     * e.g:    $map->setWidth(240);
+     *
+     * @param int $iWidth
+     *
+     * @return Map
+     * @throws Exception
+     */
 	public function setWidth($iWidth) {
 
 		if (!is_numeric($iWidth)) {
@@ -242,16 +260,18 @@ class GoogleStaticMap {
 		$this->iWidth = (int) $iWidth;
 		return $this;
 	}
-
-	/**
-	 * Set the language of the map, acceptable values are:
-	 * 'eu', 'bg', 'bn', 'ca', 'cs', 'da', 'de', 'el', 'en', 'en-AU', 'en-GB', 'es', 'eu', 'fa', 'fi', 'fil', 'fr', 'gl', 'gu', 'hi', 'hr', 'hu', 'id', 'it', 'iw', 'ja', 'kn', 'ko', 'lt', 'lv', 'ml', 'mr', 'nl', 'nn', 'no', 'or', 'pl', 'pt', 'pt-BR', 'pt-PT', 'rm', 'ro', 'ru', 'sk', 'sl', 'sr', 'sv', 'tl', 'ta', 'te', 'th', 'tr', 'uk', 'vi', 'zh-CN', 'zh-TW'
-	 *
-	 * e.g:	$map->setLanguage('ca');
-	 *
-	 * @param type $sLanguage
-	 * @return GoogleStaticMap
-	 */
+    
+    /**
+     * Set the language of the map, acceptable values are:
+     * 'eu', 'bg', 'bn', 'ca', 'cs', 'da', 'de', 'el', 'en', 'en-AU', 'en-GB', 'es', 'eu', 'fa', 'fi', 'fil', 'fr', 'gl', 'gu', 'hi', 'hr', 'hu', 'id', 'it', 'iw', 'ja', 'kn', 'ko', 'lt', 'lv', 'ml', 'mr', 'nl', 'nn', 'no', 'or', 'pl', 'pt', 'pt-BR', 'pt-PT', 'rm', 'ro', 'ru', 'sk', 'sl', 'sr', 'sv', 'tl', 'ta', 'te', 'th', 'tr', 'uk', 'vi', 'zh-CN', 'zh-TW'
+     *
+     * e.g:    $map->setLanguage('ca');
+     *
+     * @param string $sLanguage
+     *
+     * @return Map
+     * @throws Exception
+     */
 	public function setLanguage($sLanguage) {
 		if (!in_array($sLanguage, $this->aLanguages)) {
 			throw new Exception('Unknown language requested');
@@ -260,20 +280,22 @@ class GoogleStaticMap {
 		$this->sLanguage = $sLanguage;
 		return $this;
 	}
-
-	/**
-	 * Create (or adds) the styling of single the map feature, pass in either an object of _GoogleStaticMapFeature or an array of parameters
-	 *
-	 * e.g:	$map->setFeatureStyling(array('feature'=>'all', 'element'=>'all', 'style'=>array('hue'=>'6095C6', 'saturation'=>-23, 'gamma'=>3.88, 'lightness'=>16)));
-	 *
-	 * @param GoogleStaticMapFeature $mFeatureStyling
-	 * @return GoogleStaticMap
-	 */
+    
+    /**
+     * Create (or adds) the styling of single the map feature, pass in either an object of _GoogleStaticMapFeature or an array of parameters
+     *
+     * e.g:    $map->setFeatureStyling(array('feature'=>'all', 'element'=>'all', 'style'=>array('hue'=>'6095C6', 'saturation'=>-23, 'gamma'=>3.88, 'lightness'=>16)));
+     *
+     * @param MapFeature| array  $mFeatureStyling
+     *
+     * @return Map
+     * @throws Exception
+     */
 	public function setFeatureStyling($mFeatureStyling) {
-		if ($mFeatureStyling instanceof GoogleStaticMapFeature) {
+		if ($mFeatureStyling instanceof MapFeature) {
 			$this->aFeatureStyling[] = $mFeatureStyling;
 		} elseif (is_array($mFeatureStyling)) {
-			$this->aFeatureStyling[] = new GoogleStaticMapFeature($mFeatureStyling);
+			$this->aFeatureStyling[] = new MapFeature($mFeatureStyling);
 		} else {
 			throw new Exception('Unknown Feature Styling Passed');
 		}
@@ -283,18 +305,16 @@ class GoogleStaticMap {
 
 	/**
 	 * Creates the GoogleMapPath object used to draw points on the map. Either
-	 * pass an array of values through, or an GoogleStaticMapPath object.
+	 * pass an array of values through, or an Path object.
 	 * 
-	 * @param mixed $mPath GoogleStaticMapPath or array to build object
-	 * @return \GoogleStaticMap
+	 * @param mixed $mPath Path or array to build object
+	 * @return Map
 	 */
 	public function setMapPath($mPath) {
-		if ($mPath instanceof GoogleStaticMapPath) {
+		if ($mPath instanceof Path)
 			$this->oPath = $mPath;
-		} elseif (is_array($mPath)) {
-			$this->oPath = new GoogleStaticMapPath($mPath);
-		}
-
+		 elseif (is_array($mPath))
+			$this->oPath = new Path($mPath);
 		return $this;
 	}
 
@@ -406,14 +426,14 @@ class GoogleStaticMap {
 	public function validLength($sString) {
 		return ((strlen($sString) > $this::MAX_URL_LENGTH) ? false : true);
 	}
-
-	/**
-	 * Creates the final url for the image tag
-	 *
-	 * e.g:	$url = $map->buildSource();
-	 *
-	 * @return string
-	 */
+    
+    /**
+     * Creates the final url for the image tag
+     *
+     * e.g:    $url = $map->buildSource();
+     * @return string
+     * @throws Exception
+     */
 	public function buildSource() {
 		$aURL = array();
 
@@ -443,7 +463,7 @@ class GoogleStaticMap {
 		}
 
 
-		if ($this->oPath instanceof GoogleStaticMapPath) {
+		if ($this->oPath instanceof Path) {
 			$aURL[] = $this->oPath->build();
 		}
 
@@ -459,5 +479,3 @@ class GoogleStaticMap {
 	}
 
 }
-
-?>

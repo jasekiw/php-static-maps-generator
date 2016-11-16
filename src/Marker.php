@@ -1,17 +1,17 @@
 <?php
-
+namespace Google\StaticMaps;
 /**
  * @author Ben Squire <b.squire@gmail.com>
  * @license Apache 2.0
  *
- * @package GoogleStaticMap
+ * @package Map
  *
  * @abstract This class abstracts the markers that can be placed onto the
  * Google Static Maps.
  *
  * @see https://github.com/bensquire/php-static-maps-generator
  */
-class GoogleStaticMapMarker {
+class Marker {
 
 	const SEPERATOR = '|';
 
@@ -51,14 +51,15 @@ class GoogleStaticMapMarker {
 	 * @return string
 	 */
 	public function __toString() {
-		return $this->buildMarker();
+		return $this->build();
 	}
 
 	/**
 	 * Set the markers Longitude
 	 *
 	 * @param float $fLongitude
-	 * @return GoogleStaticMapMarker
+	 *
+     * @return Marker
 	 */
 	public function setLongitude($fLongitude) {
 		$this->fLongitude = $fLongitude;
@@ -69,7 +70,8 @@ class GoogleStaticMapMarker {
 	 * Set the markers Latitude
 	 *
 	 * @param float $fLatitude
-	 * @return GoogleStaticMapMarker
+	 *
+     * @return Marker
 	 */
 	public function setLatitude($fLatitude) {
 		$this->fLatitude = $fLatitude;
@@ -80,7 +82,8 @@ class GoogleStaticMapMarker {
 	 * Set the label for this marker
 	 *
 	 * @param string $sLabel
-	 * @return GoogleStaticMapMarker
+	 *
+*@return Marker
 	 */
 	public function setLabel($sLabel) {
 		$this->sLabel = $sLabel;
@@ -91,7 +94,8 @@ class GoogleStaticMapMarker {
 	 * Set the color for this marker
 	 *
 	 * @param string $sColor
-	 * @return GoogleStaticMapMarker
+	 *
+     * @return Marker
 	 */
 	public function setColor($sColor) {
 		$this->sColor = $sColor;
@@ -102,7 +106,8 @@ class GoogleStaticMapMarker {
 	 * Set the size of the marker
 	 *
 	 * @param string $iSize
-	 * @return GoogleStaticMapMarker
+	 *
+     * @return Marker
 	 */
 	public function setSize($iSize) {
 		if ((in_array($iSize, $this->aMarkerSizes))) {
@@ -171,5 +176,3 @@ class GoogleStaticMapMarker {
 	}
 
 }
-
-?>
