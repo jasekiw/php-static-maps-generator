@@ -3,6 +3,7 @@
     "description": "generates google static map",
     "type": "library",
     "license": "Apache 2.0",
+    "keywords": ["google", "static", "maps", "api", "client", "generator"],
     "authors": [
       {
         "name": "jasekiw",
