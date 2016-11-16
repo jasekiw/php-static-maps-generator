@@ -18,7 +18,7 @@ class MapFeature {
 
 	const SEPERATOR = '|';
 
-	protected $aFeatures = array(
+	const aFeatures = array(
 		'administrative',
 		'administrative.country',
 		'administrative.land_parcel',
@@ -51,7 +51,7 @@ class MapFeature {
 		'transit.station.rail',
 		'water'
 	);
-	protected $aElements = array('all', 'geometry', 'labels');
+	const aElements = ['all', 'geometry', 'labels'];
 	protected $sFeature = null;
 	protected $sElement = null;
 	protected $oStyle = null;
@@ -79,7 +79,7 @@ class MapFeature {
      * @throws Exception
      */
 	public function setFeature($sFeature) {
-		if (!in_array($sFeature, $this->aFeatures)) {
+		if (!in_array($sFeature, self::aFeatures)) {
 			throw new Exception('Unknown Map Feature');
 		}
 
@@ -117,7 +117,7 @@ class MapFeature {
      * @throws Exception
      */
 	public function setElement($sElement) {
-		if (!in_array($sElement, $this->aElements)) {
+		if (!in_array($sElement, self::aElements)) {
 			throw new Exception('Unknown Map Element');
 		}
 

@@ -20,7 +20,7 @@ class Path {
 	const SEPERATOR = '|';
 
 	protected $aPoints = array();
-	protected $aAcceptableColors = array(
+	const aAcceptableColors = array(
 		'black',
 		'brown',
 		'green',
@@ -81,7 +81,7 @@ class Path {
 	public function setColor($sColor) {
 		$sColor = strtolower($sColor);
 
-		if (!preg_match('/^0x[0-9A-F]{6,8}/', $sColor) && !in_array($sColor, $this->aAcceptableColors)) {
+		if (!preg_match('/^0x[0-9A-F]{6,8}/', $sColor) && !in_array($sColor, self::aAcceptableColors)) {
 			throw new Exception('Invalid Color, 24/32bit (0x00000000) or string: ' . $sColor);
 		}
 

@@ -32,12 +32,12 @@ use Exception;
 class Map {
 
 	const MAX_URL_LENGTH = 2048;
-
-	protected $sGoogleURL = 'maps.google.com/maps/api/staticmap';
-	protected $aLanguages = ['eu', 'bg', 'bn', 'ca', 'cs', 'da', 'de', 'el', 'en', 'en-AU', 'en-GB', 'es', 'eu', 'fa', 'fi', 'fil', 'fr', 'gl', 'gu', 'hi', 'hr', 'hu', 'id', 'it', 'iw', 'ja', 'kn', 'ko', 'lt', 'lv', 'ml', 'mr', 'nl', 'nn', 'no', 'or', 'pl', 'pt', 'pt-BR', 'pt-PT', 'rm', 'ro', 'ru', 'sk', 'sl', 'sr', 'sv', 'tl', 'ta', 'te', 'th', 'tr', 'uk', 'vi', 'zh-CN', 'zh-TW'];
-	protected $aFormatTypes = ['png', 'png8', 'png32', 'gif', 'jpg', 'jpg-baseline'];
-	protected $aMapTypes = ['roadmap', 'satellite', 'hybrid', 'terrain'];
-	protected $aScales = [1, 2, 4]; //4 is business only
+    
+    const sGoogleURL = 'maps.google.com/maps/api/staticmap';
+	const aLanguages = ['eu', 'bg', 'bn', 'ca', 'cs', 'da', 'de', 'el', 'en', 'en-AU', 'en-GB', 'es', 'eu', 'fa', 'fi', 'fil', 'fr', 'gl', 'gu', 'hi', 'hr', 'hu', 'id', 'it', 'iw', 'ja', 'kn', 'ko', 'lt', 'lv', 'ml', 'mr', 'nl', 'nn', 'no', 'or', 'pl', 'pt', 'pt-BR', 'pt-PT', 'rm', 'ro', 'ru', 'sk', 'sl', 'sr', 'sv', 'tl', 'ta', 'te', 'th', 'tr', 'uk', 'vi', 'zh-CN', 'zh-TW'];
+    const aFormatTypes = ['png', 'png8', 'png32', 'gif', 'jpg', 'jpg-baseline'];
+    const aMapTypes = ['roadmap', 'satellite', 'hybrid', 'terrain'];
+    const aScales = [1, 2, 4]; //4 is business only
 	protected $bHTTPS = true; // by default we need it to be https or else google will reject our request
 	protected $sAPIKey = null;  //TODO Finishing Adding
 	protected $mCenter = null;  //{latitude,longitude} or ('city hall, new york, ny')
@@ -49,10 +49,10 @@ class Map {
 	protected $sMapType = 'roadmap'; //See $map_types;
 	protected $sLanguage = 'en-GB';
 	protected $sRegion = '';   //TODO Add
-	protected $aMarkers = array();
-	protected $oPath = array();   //TODO Add
-	protected $aVisible = array();  //TODO Add
-	protected $aFeatureStyling = array();
+	protected $aMarkers = [];
+	protected $oPath = [];   //TODO Add
+	protected $aVisible = [];  //TODO Add
+	protected $aFeatureStyling = [];
 	protected $bSensor = false;
 
 	public function __construct() {
@@ -145,7 +145,7 @@ class Map {
      * @throws Exception
      */
 	public function setScale($iScale) {
-		if (!is_int($iScale) || !in_array($iScale, $this->aScales)) {
+		if (!is_int($iScale) || !in_array($iScale, self::aScales)) {
 			throw new Exception('Invalid map scale value: ' . $iScale);
 		}
 
@@ -184,7 +184,7 @@ class Map {
      * @throws Exception
      */
 	public function setMapType($sMapType) {
-		if (!in_array($sMapType, $this->aMapTypes)) {
+		if (!in_array($sMapType, self::aMapTypes)) {
 			throw new Exception('Unknown maptype requested.');
 		}
 
@@ -205,7 +205,7 @@ class Map {
      */
 	public function setFormat($sFileFormat) {
 
-		if (!in_array($sFileFormat, $this->aFormatTypes)) {
+		if (!in_array($sFileFormat, self::aFormatTypes)) {
 			throw new Exception('Unknown image format requested');
 		}
 
@@ -273,7 +273,7 @@ class Map {
      * @throws Exception
      */
 	public function setLanguage($sLanguage) {
-		if (!in_array($sLanguage, $this->aLanguages)) {
+		if (!in_array($sLanguage, self::aLanguages)) {
 			throw new Exception('Unknown language requested');
 		}
 
@@ -370,7 +370,7 @@ class Map {
 	 * @return string
 	 */
 	public function getFormat() {
-		return $this->aFormatTypes;
+		return self::aFormatTypes;
 	}
 
 	/**
@@ -469,7 +469,7 @@ class Map {
 
 		$aURL[] = 'sensor=' . (($this->bSensor) ? 'true' : 'false');
 
-		$sSrcTag = 'http' . (($this->bHTTPS === true) ? 's' : '') . '://' . $this->sGoogleURL . '?' . implode('&', $aURL);
+		$sSrcTag = 'http' . (($this->bHTTPS === true) ? 's' : '') . '://' . self::sGoogleURL . '?' . implode('&', $aURL);
 
 		if (!$this->validLength($sSrcTag)) {
 			throw new Exception('URL Exceeded maxiumum length of ' . $this::MAX_URL_LENGTH . ' characters.');

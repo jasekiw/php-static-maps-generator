@@ -15,7 +15,7 @@ class Marker {
 
 	const SEPERATOR = '|';
 
-	protected $aMarkerSizes = array('tiny', 'mid', 'small');
+	const aMarkerSizes = ['tiny', 'mid', 'small'];
 	protected $fLongitude = '';
 	protected $fLatitude = '';
 	protected $sLabel = '';
@@ -110,10 +110,8 @@ class Marker {
      * @return Marker
 	 */
 	public function setSize($iSize) {
-		if ((in_array($iSize, $this->aMarkerSizes))) {
+		if ((in_array($iSize, self::aMarkerSizes)))
 			$this->sSize = $iSize;
-		}
-
 		return $this;
 	}
 
