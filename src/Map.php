@@ -1,6 +1,7 @@
 <?php
 namespace Google\StaticMaps;
 use Exception;
+use GuzzleHttp\Client;
 
 /**
  * @author Ben Squire <b.squire@gmail.com>
@@ -477,5 +478,27 @@ class Map {
 
 		return $sSrcTag;
 	}
+    
+    /**
+     * @param bool $dataUrl adds the data url header to the base64 encoded image
+     *
+     * @return string
+     */
+    public function getImage($dataUrl = false) {
+        $client = new Client([
+            'timeout'  => 5.0,
+        ]);
+        $url = $this->buildSource();
+        $img = base64_encode($client->get($url)->getBody()->getContents());
+        if($dataUrl) {
+            $type = $this->sFileFormat;
+            if(strpos($type, "png") !== false)
+                $type = "png";
+            else if(strpos($type, "jpeg") !== false)
+                $type = "jpg";
+            $img = "data:image/" . $type . ";base64," . $img;
+        }
+        return $img;
+    }
 
 }
