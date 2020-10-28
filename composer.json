@@ -12,7 +12,11 @@
       {
         "name": "Ben Squire",
         "email": "b.squire@gmail.com"
-      }
+      },
+      {
+        "name": "Louisville Geek",
+        "email": "developmentteam@lougeek.com"
+      }  
     ],
     "autoload": {
       "psr-4": {
